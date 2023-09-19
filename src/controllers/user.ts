@@ -1,4 +1,3 @@
-import { model } from 'mongoose';
 import { models } from '../models';
 
 type USER = {
@@ -14,10 +13,13 @@ const getUserByEmail = (email: string) => models.User.findOne({ email });
 const update = (id: string, data: USER) =>
   models.User.updateOne({ _id: id }, data);
 const getAll = () => models.User.find();
+const setActivity = (id: string, active: boolean) =>
+  models.User.findByIdAndUpdate(id, { active: active });
 export const userControllers = {
   create,
   getUserById,
   getUserByEmail,
   update,
   getAll,
+  setActivity,
 };
