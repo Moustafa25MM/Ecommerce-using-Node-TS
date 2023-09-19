@@ -18,7 +18,7 @@ const userLogin = async (req: Request, res: Response) => {
   );
   if (!compare) res.status(401).json({ error: 'Invalid email or password' });
   else {
-    const token = authMethods.generateJWT({ id: userDataFromDB.id });
+    const token = authMethods.generateJWTForUser({ id: userDataFromDB.id });
 
     const userData = {
       id: userDataFromDB.id,
@@ -45,7 +45,7 @@ const adminLogin = async (req: Request, res: Response) => {
   );
   if (!compare) res.status(401).json({ error: 'Invalid email or password' });
   else {
-    const token = authMethods.generateJWT({ id: adminDataFromDB.id });
+    const token = authMethods.generateJWTForAdmin({ id: adminDataFromDB.id });
     adminDataFromDB.active = true;
     const adminData = {
       id: adminDataFromDB.id,

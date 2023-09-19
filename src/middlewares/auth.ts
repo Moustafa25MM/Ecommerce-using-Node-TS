@@ -7,7 +7,8 @@ import { adminControllers } from '../controllers/admin';
 
 dotenv.config();
 
-const JWTSecret = process.env.JWT_SECRET;
+const JWTSecretforUser = process.env.JWT_SECRET_USER;
+const JWTSecretforAdmin = process.env.JWT_SECRET_ADMIN;
 
 const hashPassword = (password: string): String =>
   bcrypt.hashSync(password as string, 10);
@@ -23,8 +24,11 @@ const comparePassword = async (
 type TokenPayLoad = {
   id: string;
 };
-const generateJWT = (payload: TokenPayLoad): String =>
-  jwt.sign(payload, JWTSecret as string, { expiresIn: '7d' });
+const generateJWTForUser = (payload: TokenPayLoad): String =>
+  jwt.sign(payload, JWTSecretforUser as string, { expiresIn: '7d' });
+
+const generateJWTForAdmin = (payload: TokenPayLoad): String =>
+  jwt.sign(payload, JWTSecretforAdmin as string, { expiresIn: '7d' });
 
 const isUserAuthorized = async (req: any, res: any, next: NextFunction) => {
   const token = req.headers.authorization;
@@ -33,7 +37,10 @@ const isUserAuthorized = async (req: any, res: any, next: NextFunction) => {
   }
 
   try {
-    const payload: { id: string } = jwt.verify(token, JWTSecret as string) as {
+    const payload: { id: string } = jwt.verify(
+      token,
+      JWTSecretforUser as string
+    ) as {
       id: string;
     };
 
@@ -63,9 +70,13 @@ const isAdminAuthorized = async (req: any, res: any, next: NextFunction) => {
   }
 
   try {
-    const payload: { id: string } = jwt.verify(token, JWTSecret as string) as {
+    const payload: { id: string } = jwt.verify(
+      token,
+      JWTSecretforAdmin as string
+    ) as {
       id: string;
     };
+    console.log(payload);
 
     const adminData = await adminControllers.getAdminById(payload.id);
     if (!adminData) {
@@ -89,7 +100,8 @@ const isAdminAuthorized = async (req: any, res: any, next: NextFunction) => {
 export const authMethods = {
   hashPassword,
   comparePassword,
-  generateJWT,
+  generateJWTForUser,
+  generateJWTForAdmin,
   isUserAuthorized,
   isAdminAuthorized,
 };
