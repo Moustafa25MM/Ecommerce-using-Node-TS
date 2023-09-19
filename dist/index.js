@@ -30,6 +30,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv = __importStar(require("dotenv"));
+const routes_1 = require("./routes");
 dotenv.config();
 const mongoUrl = process.env.MONGO_URL;
 mongoose_1.default
@@ -41,10 +42,9 @@ mongoose_1.default
     console.log(`DB connection failed`);
 });
 const app = (0, express_1.default)();
+app.use(express_1.default.json());
 app.use((0, morgan_1.default)('dev'));
-app.get('/', (req, res) => {
-    res.json({ msg: 'welcome to ecommerce world' });
-});
+app.use(routes_1.indexRouter);
 const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`the server is running on port ${port}`);

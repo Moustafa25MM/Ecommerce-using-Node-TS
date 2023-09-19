@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import * as dotenv from 'dotenv';
-
+import { indexRouter } from './routes';
 dotenv.config();
 const mongoUrl = process.env.MONGO_URL as string;
 mongoose
@@ -15,11 +15,10 @@ mongoose
   });
 
 const app: Express = express();
+app.use(express.json());
 app.use(morgan('dev'));
 
-app.get('/', (req, res) => {
-  res.json({ msg: 'welcome to ecommerce world' });
-});
+app.use(indexRouter);
 
 const port = process.env.PORT;
 app.listen(port, () => {
