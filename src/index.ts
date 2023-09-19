@@ -15,6 +15,11 @@ mongoose
   });
 
 const app: Express = express();
+app.use(morgan('dev'));
+
+app.get('/', (req, res) => {
+  res.json({ msg: 'welcome to ecommerce world' });
+});
 
 const port = process.env.PORT;
 app.listen(port, () => {
