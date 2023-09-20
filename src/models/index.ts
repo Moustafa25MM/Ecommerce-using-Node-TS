@@ -4,6 +4,7 @@ import Category from './category';
 import Product from './product';
 import Cart from './cart';
 import Address from './address';
+import Wishlist from './wishlist';
 export const models = {
   User,
   Admin,
@@ -11,4 +12,5 @@ export const models = {
   Product,
   Cart,
   Address,
+  Wishlist,
 };
