@@ -12,5 +12,5 @@ router.patch(
   authMethods.isUserAuthorized,
   userMiddlewares.updateUser
 );
-router.get('/all', authMethods.isUserAuthorized, userMiddlewares.getAllUsers);
+router.get('/all', authMethods.isAdminAuthorized, userMiddlewares.getAllUsers);
 export const userRoutes: Router = router;
