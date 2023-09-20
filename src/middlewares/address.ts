@@ -33,7 +33,25 @@ const createAddress = async (req: any, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getUserAddresses = async (req: any, res: Response) => {
+  const addresses = await addressControllers.getByUser(req.user.id);
+  return res.status(200).json(addresses);
+};
+
+const removeAddress = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const existingAddress = await addressControllers.getById(id);
+  if (!existingAddress) {
+    throw new Error('Address not found');
+  }
+  const removedAddress = await addressControllers.remove(id);
+  return res
+    .status(200)
+    .json({ address: removedAddress, msg: 'deleted Successfully' });
+};
 
 export const addressMiddlewares = {
   createAddress,
+  getUserAddresses,
+  removeAddress,
 };

@@ -9,5 +9,15 @@ router.post(
   authMethods.isUserAuthorized,
   addressMiddlewares.createAddress
 );
+router.get(
+  '/user',
+  authMethods.isUserAuthorized,
+  addressMiddlewares.getUserAddresses
+);
 
+router.delete(
+  '/delete/:id',
+  authMethods.isUserAuthorized,
+  addressMiddlewares.removeAddress
+);
 export const addressRoutes: Router = router;
