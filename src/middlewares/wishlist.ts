@@ -42,6 +42,55 @@ const addProductToWishlist = async (req: any, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+const getWishlistByUserId = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const wishlist = await wishlistControllers.getByUserId(userId);
+  if (!wishlist) {
+    return res.status(400).json({ error: 'Wishlist not found!' });
+  }
+  return res.status(200).json(wishlist);
+};
+const removeWishlist = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const wishlist = await wishlistControllers.remove(userId);
+  return res
+    .status(200)
+    .json({ msg: 'Wishlist deleted successfully', wishlist });
+};
+
+const removeProductFromWishlist = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const { productId } = req.body;
+  try {
+    let wishlist = await wishlistControllers.getByUserId(userId);
+    if (!wishlist) {
+      return res.status(400).json({ error: 'Wishlist not found!' });
+    }
+    const productIndex = wishlist.products.findIndex(
+      (product) => product.toString() === productId
+    );
+    if (productIndex > -1) {
+      wishlist.products.splice(productIndex, 1);
+      const updateWishlist: UpdateWishlistData = {
+        userId,
+        products: wishlist.products,
+      };
+      const updatedWishlist = await wishlistControllers.update(
+        userId,
+        updateWishlist
+      );
+      return res.status(200).json(updatedWishlist);
+    } else {
+      return res.status(400).json({ error: 'Product not found in wishlist!' });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const wishlistMiddlewares = {
   addProductToWishlist,
+  getWishlistByUserId,
+  removeWishlist,
+  removeProductFromWishlist,
 };
