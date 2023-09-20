@@ -11,8 +11,17 @@ type PRODUCT = {
 
 const create = (data: PRODUCT) => models.Product.create(data);
 const getByName = (name: string) => models.Product.findOne({ name });
+const getById = (id: string) => models.Product.findById(id);
+const update = (id: string, data: PRODUCT) =>
+  models.Product.findByIdAndUpdate(id, data, { runValidators: true });
+const remove = (id: string) => models.Product.findByIdAndRemove(id);
+const getAll = () => models.Product.find();
 
 export const productControllers = {
   create,
   getByName,
+  getById,
+  update,
+  remove,
+  getAll,
 };
