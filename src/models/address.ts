@@ -8,7 +8,7 @@ interface ADDRESS extends Document {
   city: string;
   region: string;
   postalCode: string;
-  user: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 const addressSchema: Schema = new Schema<ADDRESS>(
@@ -37,9 +37,9 @@ const addressSchema: Schema = new Schema<ADDRESS>(
       type: String,
       required: true,
     },
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       required: true,
     },
   },
