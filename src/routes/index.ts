@@ -8,6 +8,7 @@ import { addressRoutes } from './address';
 import { wishlistRoutes } from './wishlist';
 import { orderRoutes } from './order';
 import { reviewRoutes } from './review';
+import { productVariationRoutes } from './productVariation';
 const router = Router();
 
 router.use('/user', userRoutes);
@@ -19,5 +20,6 @@ router.use('/address', addressRoutes);
 router.use('/wishlist', wishlistRoutes);
 router.use('/order', orderRoutes);
 router.use('/review', reviewRoutes);
+router.use('/variation', productVariationRoutes);
 
 export const indexRouter: Router = router;

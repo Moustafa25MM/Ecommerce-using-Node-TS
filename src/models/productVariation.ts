@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 import Product from './product';
 
-// Define your enum
 export enum Size {
   SMALL = 'S',
   MEDIUM = 'M',
