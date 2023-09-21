@@ -29,6 +29,22 @@ const create = async (data: PRODUCTVARIATION) => {
   return models.ProductVariation.create(data);
 };
 
+const getById = (id: string) => models.ProductVariation.findById(id);
+const getByProductId = (productId: string) =>
+  models.ProductVariation.find({ productId });
+const update = (id: string, data: PRODUCTVARIATION) =>
+  models.ProductVariation.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true,
+  });
+const remove = (id: string) => models.ProductVariation.findByIdAndRemove(id);
+const getAll = () => models.ProductVariation.find();
+
 export const productVariationControllers = {
   create,
+  getByProductId,
+  getById,
+  update,
+  remove,
+  getAll,
 };
