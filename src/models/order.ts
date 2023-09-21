@@ -29,12 +29,17 @@ const orderSchema: Schema = new Schema<IOrder>({
   totalPrice: { type: Number, required: true },
 });
 
-const orderItemSchema: Schema = new Schema<IOrderItem>({
-  productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-  orderId: { type: Schema.Types.ObjectId, ref: 'Order', required: true },
-});
+const orderItemSchema: Schema = new Schema<IOrderItem>(
+  {
+    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    price: { type: Number, required: true },
+    quantity: { type: Number, required: true },
+    orderId: { type: Schema.Types.ObjectId, ref: 'Order', required: true },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export const Order = mongoose.model('order', orderSchema);
 export const OrderItems = mongoose.model('orderitems', orderItemSchema);
