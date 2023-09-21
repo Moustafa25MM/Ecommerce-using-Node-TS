@@ -6,6 +6,7 @@ import Cart from './cart';
 import Address from './address';
 import Wishlist from './wishlist';
 import { Order, OrderItems } from './order';
+import { Review } from './review';
 export const models = {
   User,
   Admin,
@@ -16,4 +17,5 @@ export const models = {
   Wishlist,
   Order,
   OrderItems,
+  Review,
 };
