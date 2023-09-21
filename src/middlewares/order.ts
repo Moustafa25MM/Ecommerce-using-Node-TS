@@ -59,6 +59,25 @@ const createOrderFromCart = async (req: any, res: Response) => {
   }
 };
 
+const getOrdersByUserId = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  try {
+    const orders = await orderControllers.getByUserId(userId);
+    if (!orders) {
+      return res.status(400).json({ message: 'no orders for that users' });
+    }
+    const orderItems = [];
+    for (const order of orders) {
+      const items = await orderItemControllers.getByOrderId(String(order._id));
+      orderItems.push(items);
+    }
+    return res.status(200).json(orderItems);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const orderMiddlewares = {
   createOrderFromCart,
+  getOrdersByUserId,
 };

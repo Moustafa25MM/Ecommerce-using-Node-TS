@@ -10,4 +10,10 @@ router.post(
   orderMiddlewares.createOrderFromCart
 );
 
+router.get(
+  '/user',
+  authMethods.isUserAuthorized,
+  orderMiddlewares.getOrdersByUserId
+);
+
 export const orderRoutes: Router = router;
