@@ -11,7 +11,7 @@ type PRODUCT = {
 
 const create = (data: PRODUCT) => models.Product.create(data);
 const getByName = (name: string) => models.Product.findOne({ name });
-const getById = (id: string) => models.Product.findById(id);
+const getById = (id: any) => models.Product.findById(id);
 const update = (id: string, data: PRODUCT) =>
   models.Product.findByIdAndUpdate(id, data, { runValidators: true });
 const remove = (id: string) => models.Product.findByIdAndRemove(id);

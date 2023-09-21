@@ -7,6 +7,7 @@ import { cartRoutes } from './cart';
 import { addressRoutes } from './address';
 import { wishlistRoutes } from './wishlist';
 import { orderRoutes } from './order';
+import { reviewRoutes } from './review';
 const router = Router();
 
 router.use('/user', userRoutes);
@@ -17,5 +18,6 @@ router.use('/cart', cartRoutes);
 router.use('/address', addressRoutes);
 router.use('/wishlist', wishlistRoutes);
 router.use('/order', orderRoutes);
+router.use('/review', reviewRoutes);
 
 export const indexRouter: Router = router;

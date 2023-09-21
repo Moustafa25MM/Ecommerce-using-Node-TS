@@ -1,7 +1,7 @@
 import { models } from '../models';
 import { Types } from 'mongoose';
 
-interface ORDER {
+export interface ORDER {
   userId: Types.ObjectId;
   status: 'pending' | 'shipped' | 'delivered';
   dateOrdered: Date;
