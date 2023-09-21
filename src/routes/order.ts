@@ -16,4 +16,10 @@ router.get(
   orderMiddlewares.getOrdersByUserId
 );
 
+router.get(
+  '/product/:id',
+  authMethods.isAdminAuthorized,
+  orderMiddlewares.getOrdersByProductId
+);
+
 export const orderRoutes: Router = router;

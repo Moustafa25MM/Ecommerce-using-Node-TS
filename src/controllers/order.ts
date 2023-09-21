@@ -14,9 +14,12 @@ const create = (data: ORDER) => models.Order.create(data);
 const update = (orderId: string, data: ORDER) =>
   models.Order.findByIdAndUpdate(orderId, data, { new: true });
 const getByUserId = (userId: string) => models.Order.find({ userId });
-
+const getAll = () => models.Order.find();
+const getByOrderId = (orderId: string) => models.Order.findById(orderId);
 export const orderControllers = {
   create,
   update,
   getByUserId,
+  getAll,
+  getByOrderId,
 };
