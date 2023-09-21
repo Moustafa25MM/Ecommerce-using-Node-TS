@@ -3,10 +3,14 @@ import { REVIEW, reviewControllers } from '../controllers/review';
 import { orderControllers } from '../controllers/order';
 import { orderItemControllers } from '../controllers/orderItem';
 import { Order } from '../models/order';
+import { productControllers } from '../controllers/product';
 
 const addReview = async (req: any, res: Response) => {
   const userId = req.user.id;
   const { productId, rating, comment } = req.body;
+  if (!rating || !comment) {
+    return res.status(400).json({ message: 'Invalid data to add' });
+  }
   try {
     // Check if the user has ordered the product
     const orders = await orderControllers.getByUserId(userId);
@@ -23,14 +27,76 @@ const addReview = async (req: any, res: Response) => {
         .status(403)
         .json({ error: 'User has not ordered this product' });
     }
+    const existingReview = await reviewControllers.getByUserIdAndProductId(
+      userId,
+      productId
+    );
+    if (existingReview) {
+      return res
+        .status(400)
+        .json({ error: 'User has already reviewed this product' });
+    }
     const review: REVIEW = { userId, productId, rating, comment };
     const newReview = await reviewControllers.create(review);
-    res.status(201).json(newReview);
+    return res.status(201).json(newReview);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
+const updateReview = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const reviewId = req.params.id;
+  const { productId, rating, comment } = req.body;
+  if (!rating || !comment) {
+    return;
+    res.status(400).json({ message: 'Invalid data to update' });
+  }
+  const updateData: REVIEW = {
+    userId,
+    productId,
+    rating,
+    comment,
+  };
+  try {
+    const updatedReview = await reviewControllers.update(reviewId, updateData);
+    res.json(updatedReview);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteReview = async (req: any, res: Response) => {
+  const reviewId = req.params.id;
+  const isExisted = await reviewControllers.getByReviewId(reviewId);
+  if (!isExisted) {
+    return res.status(400).json({ message: 'you already deleted the review' });
+  }
+  try {
+    await reviewControllers.remove(reviewId);
+    return res.json({ message: 'Review deleted' });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const getReviewsForProduct = async (req: Request, res: Response) => {
+  const productId = req.params.productId;
+  const isExisted = await productControllers.getById(productId);
+  if (!isExisted) {
+    return res.status(400).json({ messgae: 'no product found!' });
+  }
+  try {
+    const reviews = await reviewControllers.getByProductId(productId);
+    return res.json(reviews);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const reviewMiddlewares = {
   addReview,
+  updateReview,
+  deleteReview,
+  getReviewsForProduct,
 };
