@@ -17,8 +17,10 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.3",
+    "@types/multer": "^1.4.7",
     "@types/node": "^20.6.2",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^1.40.0",
     "concurrently": "^8.2.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -27,6 +29,7 @@
     "express-fileupload": "^1.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.2",
+    "multer": "^1.4.5-lts.1",
     "rimraf": "^5.0.1"
   },
   "devDependencies": {
