@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { authMethods } from './auth';
 import { adminControllers } from '../controllers/admin';
+import { paginationOption } from '../libs/pagination';
 
 const createAdmin = async (req: Request, res: Response) => {
   const { username, email } = req.body;
@@ -87,8 +88,26 @@ const updateAdmin = async (req: Request, res: Response) => {
 
 const getAllAdmins = async (req: Request, res: Response) => {
   const admins = await adminControllers.getAll();
+  let pageSize = req.query.pageSize
+    ? parseInt(req.query.pageSize as string)
+    : 5;
+  pageSize = Math.min(20, pageSize);
+  const totalDocs = admins.length;
+  const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+  let pageNumber = req.query.pageNumber
+    ? parseInt(req.query.pageNumber as string)
+    : 1;
+  pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+  const paginatedAdmins = admins.slice(
+    (pageNumber - 1) * pageSize,
+    pageNumber * pageSize
+  );
+
+  const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
   return res.status(200).json({
-    admins: admins,
+    pagination: paginationOptions,
+    admins: paginatedAdmins,
   });
 };
 

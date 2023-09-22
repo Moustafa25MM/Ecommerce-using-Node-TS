@@ -121,7 +121,7 @@ const getAllUsers = async (req: Request, res: Response) => {
     ? parseInt(req.query.pageNumber as string)
     : 1;
   pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
-  const paginatedusers = users.slice(
+  const paginatedUsers = users.slice(
     (pageNumber - 1) * pageSize,
     pageNumber * pageSize
   );
@@ -129,7 +129,7 @@ const getAllUsers = async (req: Request, res: Response) => {
   const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
   return res.status(200).json({
     pagination: paginationOptions,
-    users: paginatedusers,
+    users: paginatedUsers,
   });
 };
 
