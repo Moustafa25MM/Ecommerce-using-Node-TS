@@ -162,7 +162,7 @@ const getAllProducts = async (req: Request, res: Response) => {
     const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
     return res.status(200).json({
       pagination: paginationOptions,
-      reviews: paginatedProducts,
+      products: paginatedProducts,
     });
     return res.status(200).json(products);
   } catch (error: any) {

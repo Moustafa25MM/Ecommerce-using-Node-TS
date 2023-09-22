@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { CART, cartControllers } from '../controllers/cart';
 import { productControllers } from '../controllers/product';
 import { Request, Response } from 'express';
+import { paginationOption } from '../libs/pagination';
 
 type CART_ITEMS = {
   productId: Types.ObjectId;
@@ -61,11 +62,36 @@ const removeCart = async (req: Request, res: Response) => {
 };
 const getCartByUserId = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const cart = await cartControllers.getAll(userId);
-  if (!cart) {
-    return res.status(400).json({ error: 'Cart not found!' });
+  try {
+    const cart = await cartControllers.getAll(userId);
+    if (!cart) {
+      return res.status(400).json({ error: 'Cart not found!' });
+    }
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = cart[0].items.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedCart = cart[0].items.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      userId,
+      cart: paginatedCart,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
   }
-  return res.status(200).json(cart);
 };
 
 const decrementProductQuantity = async (req: Request, res: Response) => {

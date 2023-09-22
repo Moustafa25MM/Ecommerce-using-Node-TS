@@ -162,7 +162,7 @@ const getVariationsByProductId = async (req: Request, res: Response) => {
     const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
     return res.status(200).json({
       pagination: paginationOptions,
-      variations,
+      variations: paginatedVariations,
     });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });

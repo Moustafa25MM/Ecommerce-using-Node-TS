@@ -75,7 +75,7 @@ const getWishlistByUserId = async (req: any, res: Response) => {
     pagination: paginationOptions,
     userId,
     _id: wishlist._id,
-    productIds: paginatedWishlist,
+    products: paginatedWishlist,
   });
 };
 const removeWishlist = async (req: any, res: Response) => {
