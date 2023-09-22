@@ -4,6 +4,7 @@ import { cartControllers } from '../controllers/cart';
 import { ORDERITEM, orderItemControllers } from '../controllers/orderItem';
 import { productControllers } from '../controllers/product';
 import { Types } from 'mongoose';
+import { paginationOption } from '../libs/pagination';
 
 const createOrderFromCart = async (req: any, res: Response) => {
   try {
@@ -64,14 +65,44 @@ const getOrdersByUserId = async (req: any, res: Response) => {
   try {
     const orders = await orderControllers.getByUserId(userId);
     if (!orders) {
-      return res.status(400).json({ message: 'no orders for that users' });
+      return res.status(400).json({ message: 'no orders for that user' });
     }
-    const orderItems = [];
+    const ordersWithProductData = [];
     for (const order of orders) {
       const items = await orderItemControllers.getByOrderId(String(order._id));
-      orderItems.push(items);
+      const orderWithProduct = {
+        ...order.toObject(),
+        products: await Promise.all(
+          items.map(async (item: any) => {
+            return {
+              ...item.toObject(),
+            };
+          })
+        ),
+      };
+      ordersWithProductData.push(orderWithProduct);
     }
-    return res.status(200).json(orderItems);
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = ordersWithProductData.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedOrders = ordersWithProductData.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      orders: paginatedOrders,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
@@ -85,18 +116,39 @@ const getOrdersByProductId = async (req: any, res: Response) => {
       return res.status(400).json({ message: 'no Product found!' });
     }
     const orders = await orderItemControllers.getByProductId(productId);
-    const users = [];
+    const ordersWithProductData = [];
     for (const order of orders) {
       const item = await orderControllers.getByOrderId(String(order.orderId));
       const userId = item?.userId;
-      users.push(userId);
+      const orderWithProduct = { ...order.toObject(), userId, product };
+      ordersWithProductData.push(orderWithProduct);
     }
     if (!orders) {
       return res
         .status(500)
         .json({ message: 'no orders done for that product' });
     }
-    return res.status(200).json({ orders: orders, users: users });
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = ordersWithProductData.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedOrders = ordersWithProductData.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      orders: paginatedOrders,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

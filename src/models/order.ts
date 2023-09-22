@@ -16,18 +16,23 @@ interface IOrderItem extends Document {
   orderId: Schema.Types.ObjectId;
 }
 
-const orderSchema: Schema = new Schema<IOrder>({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  status: {
-    type: String,
-    enum: ['pending', 'shipped', 'delivered'],
-    default: 'pending',
+const orderSchema: Schema = new Schema<IOrder>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    status: {
+      type: String,
+      enum: ['pending', 'shipped', 'delivered'],
+      default: 'pending',
+    },
+    dateOrdered: { type: Date, default: Date.now },
+    dateShipped: { type: Date },
+    dateDelivered: { type: Date },
+    totalPrice: { type: Number, required: true },
   },
-  dateOrdered: { type: Date, default: Date.now },
-  dateShipped: { type: Date },
-  dateDelivered: { type: Date },
-  totalPrice: { type: Number, required: true },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const orderItemSchema: Schema = new Schema<IOrderItem>(
   {
