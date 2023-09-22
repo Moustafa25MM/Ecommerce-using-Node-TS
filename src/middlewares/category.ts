@@ -1,5 +1,6 @@
 import { categoryControllers } from '../controllers/category';
 import { Request, Response } from 'express';
+import { paginationOption } from '../libs/pagination';
 
 const createCategory = async (req: Request, res: Response) => {
   const { name } = req.body;
@@ -22,8 +23,32 @@ const createCategory = async (req: Request, res: Response) => {
 };
 
 const getAllCategories = async (req: Request, res: Response) => {
-  const categories = await categoryControllers.getAll();
-  return res.status(200).json(categories);
+  try {
+    const categories = await categoryControllers.getAll();
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = categories.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedCategories = categories.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      categories: paginatedCategories,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 type UpdateCategoryData = {
