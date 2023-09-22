@@ -4,6 +4,7 @@ import { orderControllers } from '../controllers/order';
 import { orderItemControllers } from '../controllers/orderItem';
 import { Order } from '../models/order';
 import { productControllers } from '../controllers/product';
+import { paginationOption } from '../libs/pagination';
 
 const addReview = async (req: any, res: Response) => {
   const userId = req.user.id;
@@ -88,7 +89,27 @@ const getReviewsForProduct = async (req: Request, res: Response) => {
   }
   try {
     const reviews = await reviewControllers.getByProductId(productId);
-    return res.json(reviews);
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = reviews.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedReviews = reviews.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      reviews: paginatedReviews,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
