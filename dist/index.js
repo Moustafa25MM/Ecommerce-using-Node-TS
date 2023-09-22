@@ -43,6 +43,8 @@ mongoose_1.default
 });
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+// app.use(cookieParser());
+// app.use(express.static('src/uploadedImages'));
 app.use((0, morgan_1.default)('dev'));
 app.use(routes_1.indexRouter);
 const port = process.env.PORT;

@@ -32,10 +32,10 @@ function fileFilter(req: any, file: any, cb: any) {
   }
 }
 
-const productUpload = multer({
+const userPicUpload = multer({
   fileFilter,
   storage: userStorage,
   limits: { fileSize: maxSize },
 });
 
-export { productUpload, cloudi };
+export { userPicUpload, cloudi };

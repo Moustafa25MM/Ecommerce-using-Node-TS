@@ -1,23 +1,38 @@
 import { userControllers } from '../controllers/user';
 import { Request, Response } from 'express';
 import { authMethods } from './auth';
+import { cloudi } from './imagesUpload';
 
 const createUser = async (req: Request, res: Response) => {
   const { firstName, lastName, email } = req.body;
   let { password } = req.body;
-
+  console.log(req);
+  console.log(password);
+  if (password === undefined) {
+    return res.status(500);
+  }
   password = authMethods.hashPassword(password);
-
   try {
     const existingUser = await userControllers.getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
+    }
+    let profilePicture = '';
+    if (req.file) {
+      const uploadedImg = await cloudi.uploader.upload(req.file.path, {
+        public_id: `${Date.now}`,
+        width: 500,
+        height: 500,
+        crop: 'fill',
+      });
+      profilePicture = uploadedImg.url;
     }
     const user = await userControllers.create({
       firstName,
       lastName,
       email,
       password,
+      profilePicture,
     });
     if (!user) {
       throw new Error('Failed to create employee');

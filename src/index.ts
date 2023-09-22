@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import * as dotenv from 'dotenv';
 import { indexRouter } from './routes';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 const mongoUrl = process.env.MONGO_URL as string;
 mongoose
@@ -16,6 +17,8 @@ mongoose
 
 const app: Express = express();
 app.use(express.json());
+// app.use(cookieParser());
+// app.use(express.static('src/uploadedImages'));
 app.use(morgan('dev'));
 
 app.use(indexRouter);

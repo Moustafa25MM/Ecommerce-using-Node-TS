@@ -6,7 +6,7 @@ interface USER extends Document {
   email: string;
   password: string;
   active: boolean;
-  image: string;
+  profilePicture: string;
 }
 
 const userSchema: Schema = new Schema<USER>(
@@ -40,7 +40,7 @@ const userSchema: Schema = new Schema<USER>(
       type: Boolean,
       default: false,
     },
-    image: {
+    profilePicture: {
       type: String,
     },
   },

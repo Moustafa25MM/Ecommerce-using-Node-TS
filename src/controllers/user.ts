@@ -5,6 +5,7 @@ type USER = {
   lastName?: string;
   password?: string;
   email?: string;
+  profilePicture?: string;
 };
 
 const create = (data: USER) => models.User.create(data);

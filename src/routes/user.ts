@@ -2,11 +2,15 @@ import { Router } from 'express';
 import { userMiddlewares } from '../middlewares/user';
 import { loginMethods } from '../middlewares/login';
 import { authMethods } from '../middlewares/auth';
-
+import { userPicUpload } from '../middlewares/imagesUpload';
 const router = Router();
 
+router.post(
+  '/register',
+  userPicUpload.single('profilePicture'),
+  userMiddlewares.createUser
+);
 router.use('/login', loginMethods.userLogin);
-router.post('/register', userMiddlewares.createUser);
 router.patch(
   '/update/:id',
   authMethods.isUserAuthorized,
