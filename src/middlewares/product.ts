@@ -4,6 +4,7 @@ import Category from '../models/category';
 import { categoryControllers } from '../controllers/category';
 import { cloudi } from './imagesUpload';
 import clearImage from './clearImage';
+import { paginationOption } from '../libs/pagination';
 
 const createProduct = async (req: Request, res: Response) => {
   const { title, description, price, quantity, category } = req.body;
@@ -140,8 +141,33 @@ const removeProduct = async (req: Request, res: Response) => {
 };
 
 const getAllProducts = async (req: Request, res: Response) => {
-  const categories = await productControllers.getAll();
-  return res.status(200).json(categories);
+  try {
+    const products = await productControllers.getAll();
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = products.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedProducts = products.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      reviews: paginatedProducts,
+    });
+    return res.status(200).json(products);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 export const productMiddlewares = {
