@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { WISHLIST, wishlistControllers } from '../controllers/wishlist';
 import { productControllers } from '../controllers/product';
 import { Request, Response } from 'express';
-
+import { paginationOption } from '../libs/pagination';
 type UpdateWishlistData = {
   userId: Types.ObjectId;
   products: Types.ObjectId[];
@@ -48,7 +48,35 @@ const getWishlistByUserId = async (req: any, res: Response) => {
   if (!wishlist) {
     return res.status(400).json({ error: 'Wishlist not found!' });
   }
-  return res.status(200).json(wishlist);
+  let pageSize = req.query.pageSize
+    ? parseInt(req.query.pageSize as string)
+    : 5;
+  pageSize = Math.min(20, pageSize);
+  const totalDocs = wishlist.products.length;
+  const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+  let pageNumber = req.query.pageNumber
+    ? parseInt(req.query.pageNumber as string)
+    : 1;
+  pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+  const paginatedWishlistIds = wishlist.products.slice(
+    (pageNumber - 1) * pageSize,
+    pageNumber * pageSize
+  );
+  const paginatedWishlist = await Promise.all(
+    paginatedWishlistIds.map(async (productId: any) => {
+      const product = await productControllers.getById(productId);
+      return product;
+    })
+  );
+
+  const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+  return res.status(200).json({
+    pagination: paginationOptions,
+    userId,
+    _id: wishlist._id,
+    productIds: paginatedWishlist,
+  });
 };
 const removeWishlist = async (req: any, res: Response) => {
   const userId = req.user.id;
