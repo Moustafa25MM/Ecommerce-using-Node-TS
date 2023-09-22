@@ -7,6 +7,7 @@ interface PRODUCT extends Document {
   price: number;
   quantity: number;
   category: Types.ObjectId | Category;
+  image: string;
 }
 
 const productSchema = new Schema<PRODUCT>(
@@ -16,6 +17,10 @@ const productSchema = new Schema<PRODUCT>(
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    image: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
