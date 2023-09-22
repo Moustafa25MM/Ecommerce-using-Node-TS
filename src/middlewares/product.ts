@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import Category from '../models/category';
 import { categoryControllers } from '../controllers/category';
 import { cloudi } from './imagesUpload';
+import clearImage from './clearImage';
 
 const createProduct = async (req: Request, res: Response) => {
   const { title, description, price, quantity, category } = req.body;
@@ -58,7 +59,7 @@ const updateProduct = async (req: Request, res: Response) => {
     if (!existingProduct) {
       throw new Error('Product not found');
     }
-    if (!title || !description || !price || !quantity || !category) {
+    if (!title && !description && !price && !quantity && !category) {
       return res.status(400).json({
         error: 'At least one field should be provided for the update',
       });
@@ -122,6 +123,17 @@ const removeProduct = async (req: Request, res: Response) => {
     throw new Error('Product not found');
   }
   const removedProduct = await productControllers.remove(id);
+  console.log(product.image);
+  if (product?.image) {
+    const publicId = product.image
+      .split('/')
+      .pop()
+      ?.split('.')
+      .slice(0, -1)
+      .join('.')!;
+    console.log(publicId);
+    clearImage(publicId);
+  }
   return res
     .status(200)
     .json({ removedProduct: removedProduct, msg: 'deleted Successfully' });
