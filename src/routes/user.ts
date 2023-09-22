@@ -13,6 +13,7 @@ router.post(
 router.use('/login', loginMethods.userLogin);
 router.patch(
   '/update/:id',
+  userPicUpload.single('profilePicture'),
   authMethods.isUserAuthorized,
   userMiddlewares.updateUser
 );

@@ -49,8 +49,9 @@ type UpdateUserData = {
   lastName?: string;
   password?: string;
   email?: string;
+  profilePicture?: string;
 };
-const updateUser = async (req: Request, res: Response) => {
+const updateUser = async (req: any, res: Response) => {
   const { id } = req.params;
   let { firstName, lastName, email } = req.body;
   let { password } = req.body;
@@ -58,11 +59,24 @@ const updateUser = async (req: Request, res: Response) => {
   if (password) {
     password = authMethods.hashPassword(password);
   }
+  let profilePicture = '';
+  if (req.file) {
+    const uploadedImg = await cloudi.uploader.upload(req.file.path, {
+      public_id: `${Date.now}`,
+      width: 500,
+      height: 500,
+      crop: 'fill',
+    });
+    profilePicture = uploadedImg.url;
+  } else {
+    profilePicture = req.user.profilePicture;
+  }
   const updateUser: UpdateUserData = {
     firstName,
     lastName,
     email,
     password,
+    profilePicture,
   };
   if (Object.values(updateUser).every((value) => value === undefined)) {
     return res.status(400).json({ error: 'Invalid update data was provided' });
@@ -84,18 +98,18 @@ const updateUser = async (req: Request, res: Response) => {
     if (!updatedResult) {
       throw new Error('Failed to update employee');
     }
-    const updatedEmployee = await userControllers.getUserById(id);
-    if (!updatedEmployee) {
+    const updatedUser = await userControllers.getUserById(id);
+    if (!updatedUser) {
       throw new Error('Failed to fetch updated employee data');
     }
 
-    const { _id, firstName, lastName } = updatedEmployee;
+    const { _id, firstName, lastName, profilePicture } = updatedUser;
 
     const updatedUserData = {
       id: _id,
       firstName,
       lastName,
-      email,
+      profilePicture,
     };
 
     return res.status(200).json(updatedUserData);
