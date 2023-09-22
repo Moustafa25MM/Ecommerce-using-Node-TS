@@ -101,16 +101,7 @@ const updateUser = async (req: any, res: Response) => {
       throw new Error('Failed to fetch updated employee data');
     }
 
-    const { _id, firstName, lastName, profilePicture } = updatedUser;
-
-    const updatedUserData = {
-      id: _id,
-      firstName,
-      lastName,
-      profilePicture,
-    };
-
-    return res.status(200).json(updatedUserData);
+    return res.status(200).json(updatedUser);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
