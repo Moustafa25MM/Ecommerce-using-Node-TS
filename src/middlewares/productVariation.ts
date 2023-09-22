@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { productVariationControllers } from '../controllers/productVariation';
 import { Size } from '../models/productVariation';
 import { productControllers } from '../controllers/product';
+import { paginationOption } from '../libs/pagination';
 
 const createProductVariation = async (req: Request, res: Response) => {
   const { productId, color, size, quantity } = req.body;
@@ -103,9 +104,33 @@ const getProductVariationById = async (req: Request, res: Response) => {
   }
   return res.status(200).json(productVariation);
 };
-const getAllProductVariations = async (_req: Request, res: Response) => {
-  const productVariations = await productVariationControllers.getAll();
-  return res.status(200).json(productVariations);
+const getAllProductVariations = async (req: Request, res: Response) => {
+  try {
+    const productVariations = await productVariationControllers.getAll();
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = productVariations.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedProductVariations = productVariations.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      productVariations: paginatedProductVariations,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
 };
 const getVariationsByProductId = async (req: Request, res: Response) => {
   const { productId } = req.params;
@@ -118,8 +143,27 @@ const getVariationsByProductId = async (req: Request, res: Response) => {
         .status(404)
         .json({ error: 'No variations found for the given product ID' });
     }
+    let pageSize = req.query.pageSize
+      ? parseInt(req.query.pageSize as string)
+      : 5;
+    pageSize = Math.min(20, pageSize);
+    const totalDocs = variations.length;
+    const maxPageNumber = Math.ceil(totalDocs / pageSize);
 
-    return res.status(200).json(variations);
+    let pageNumber = req.query.pageNumber
+      ? parseInt(req.query.pageNumber as string)
+      : 1;
+    pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+    const paginatedVariations = variations.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+
+    const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
+    return res.status(200).json({
+      pagination: paginationOptions,
+      variations,
+    });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
