@@ -7,6 +7,7 @@ type PRODUCT = {
   price: number;
   quantity: number;
   category: Category;
+  image: string;
 };
 
 const create = (data: PRODUCT) => models.Product.create(data);

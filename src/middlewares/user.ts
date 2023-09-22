@@ -6,8 +6,6 @@ import { cloudi } from './imagesUpload';
 const createUser = async (req: Request, res: Response) => {
   const { firstName, lastName, email } = req.body;
   let { password } = req.body;
-  console.log(req);
-  console.log(password);
   if (password === undefined) {
     return res.status(500);
   }

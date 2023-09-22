@@ -20,6 +20,15 @@ const userStorage = multer.diskStorage({
   },
 });
 
+const productStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'src/uploadedImages/products');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + randomNumber.toString() + file.originalname);
+  },
+});
+
 function fileFilter(req: any, file: any, cb: any) {
   if (
     file.mimetype === 'image/png' ||
@@ -37,5 +46,10 @@ const userPicUpload = multer({
   storage: userStorage,
   limits: { fileSize: maxSize },
 });
+const productUpload = multer({
+  fileFilter,
+  storage: productStorage,
+  limits: { fileSize: maxSize },
+});
 
-export { userPicUpload, cloudi };
+export { userPicUpload, productUpload, cloudi };
