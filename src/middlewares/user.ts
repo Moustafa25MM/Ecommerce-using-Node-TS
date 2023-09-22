@@ -2,6 +2,7 @@ import { userControllers } from '../controllers/user';
 import { Request, Response } from 'express';
 import { authMethods } from './auth';
 import { cloudi } from './imagesUpload';
+import { paginationOption } from '../libs/pagination';
 
 const createUser = async (req: Request, res: Response) => {
   const { firstName, lastName, email } = req.body;
@@ -109,8 +110,26 @@ const updateUser = async (req: any, res: Response) => {
 
 const getAllUsers = async (req: Request, res: Response) => {
   const users = await userControllers.getAll();
+  let pageSize = req.query.pageSize
+    ? parseInt(req.query.pageSize as string)
+    : 5;
+  pageSize = Math.min(20, pageSize);
+  const totalDocs = users.length;
+  const maxPageNumber = Math.ceil(totalDocs / pageSize);
+
+  let pageNumber = req.query.pageNumber
+    ? parseInt(req.query.pageNumber as string)
+    : 1;
+  pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
+  const paginatedusers = users.slice(
+    (pageNumber - 1) * pageSize,
+    pageNumber * pageSize
+  );
+
+  const paginationOptions = paginationOption(pageSize, pageNumber, totalDocs);
   return res.status(200).json({
-    users: users,
+    pagination: paginationOptions,
+    users: paginatedusers,
   });
 };
 
