@@ -10,6 +10,18 @@ router.post(
   orderMiddlewares.createOrderFromCart
 );
 
+router.post(
+  '/shipped/:orderId',
+  authMethods.isAdminAuthorized,
+  orderMiddlewares.shipOrder
+);
+
+router.post(
+  '/delivered/:orderId',
+  authMethods.isAdminAuthorized,
+  orderMiddlewares.deliverOrder
+);
+
 router.get(
   '/user',
   authMethods.isUserAuthorized,
