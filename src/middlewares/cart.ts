@@ -60,8 +60,8 @@ const removeCart = async (req: Request, res: Response) => {
   const cart = await cartControllers.remove(userId);
   return res.status(200).json({ msg: 'Cart deleted successfully', cart });
 };
-const getCartByUserId = async (req: Request, res: Response) => {
-  const { userId } = req.params;
+const getCartByUserId = async (req: any, res: Response) => {
+  const userId = req.user.id;
   try {
     const cart = await cartControllers.getAll(userId);
     if (!cart) {
