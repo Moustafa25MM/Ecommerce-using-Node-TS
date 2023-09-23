@@ -154,6 +154,31 @@ const getOrdersByProductId = async (req: any, res: Response) => {
   }
 };
 
+const shipOrder = async (req: any, res: Response) => {
+  try {
+    const orderId = req.params.orderId;
+    const order = await orderControllers.getByOrderId(orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (order.status !== 'pending') {
+      return res
+        .status(400)
+        .json({ error: 'Invalid order status for shipping' });
+    }
+
+    order.status = 'shipped';
+    order.dateShipped = new Date(); // Set the current date as the shipping date
+    await order.save();
+
+    res.status(200).json(order);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const orderMiddlewares = {
   createOrderFromCart,
   getOrdersByUserId,
