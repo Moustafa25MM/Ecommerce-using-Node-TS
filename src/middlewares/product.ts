@@ -164,7 +164,6 @@ const getAllProducts = async (req: Request, res: Response) => {
       pagination: paginationOptions,
       products: paginatedProducts,
     });
-    return res.status(200).json(products);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

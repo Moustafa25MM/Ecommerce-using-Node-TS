@@ -18,8 +18,8 @@ const createOrderFromCart = async (req: any, res: Response) => {
       userId: cart.userId,
       status: 'pending',
       dateOrdered: new Date(),
-      dateShipped: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
-      dateDelivered: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
+      dateShipped: null,
+      dateDelivered: null,
       totalPrice: 0,
     };
 

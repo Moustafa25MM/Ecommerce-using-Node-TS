@@ -14,8 +14,9 @@ type UpdateCartData = {
   items: CART_ITEMS[];
 };
 
-const addProductToCart = async (req: Request, res: Response) => {
-  const { userId, productId, quantity } = req.body;
+const addProductToCart = async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const { productId, quantity } = req.body;
   try {
     const product = await productControllers.getById(productId);
     if (!product) {
@@ -71,14 +72,14 @@ const getCartByUserId = async (req: any, res: Response) => {
       ? parseInt(req.query.pageSize as string)
       : 5;
     pageSize = Math.min(20, pageSize);
-    const totalDocs = cart[0].items.length;
+    const totalDocs = cart[0]?.items.length;
     const maxPageNumber = Math.ceil(totalDocs / pageSize);
 
     let pageNumber = req.query.pageNumber
       ? parseInt(req.query.pageNumber as string)
       : 1;
     pageNumber = Math.min(Math.max(pageNumber, 1), maxPageNumber);
-    const paginatedCart = cart[0].items.slice(
+    const paginatedCart = cart[0]?.items.slice(
       (pageNumber - 1) * pageSize,
       pageNumber * pageSize
     );
@@ -87,7 +88,7 @@ const getCartByUserId = async (req: any, res: Response) => {
     return res.status(200).json({
       pagination: paginationOptions,
       userId,
-      cart: paginatedCart,
+      cart: paginatedCart || [],
     });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });

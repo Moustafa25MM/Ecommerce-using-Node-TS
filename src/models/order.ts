@@ -4,8 +4,8 @@ interface IOrder extends Document {
   userId: Schema.Types.ObjectId;
   status: 'pending' | 'shipped' | 'delivered';
   dateOrdered: Date;
-  dateShipped: Date;
-  dateDelivered: Date;
+  dateShipped: Date | null;
+  dateDelivered: Date | null;
   totalPrice: number;
 }
 
