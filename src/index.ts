@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import * as dotenv from 'dotenv';
 import { indexRouter } from './routes';
 import cookieParser from 'cookie-parser';
+import { errorHandler } from './middlewares/errorhandler';
 dotenv.config();
 const mongoUrl = process.env.MONGO_URL as string;
 mongoose
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use(indexRouter);
+app.use(errorHandler);
 
 const port = process.env.PORT;
 app.listen(port, () => {

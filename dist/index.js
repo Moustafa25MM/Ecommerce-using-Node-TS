@@ -31,6 +31,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv = __importStar(require("dotenv"));
 const routes_1 = require("./routes");
+const errorhandler_1 = require("./middlewares/errorhandler");
 dotenv.config();
 const mongoUrl = process.env.MONGO_URL;
 mongoose_1.default
@@ -47,6 +48,7 @@ app.use(express_1.default.json());
 // app.use(express.static('src/uploadedImages'));
 app.use((0, morgan_1.default)('dev'));
 app.use(routes_1.indexRouter);
+app.use(errorhandler_1.errorHandler);
 const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`the server is running on port ${port}`);
